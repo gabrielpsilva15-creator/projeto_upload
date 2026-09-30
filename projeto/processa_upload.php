@@ -2,26 +2,44 @@
 
 $pasta = "upload/";
 
-$arquivo = $_FILES["arquivo"];
+if (isset($_FILES["arquivo"])) {
 
-$nome = $arquivo["name"];
-$temporario = $arquivo["tmp_name"];
+    $arquivo = $_FILES["arquivo"];
 
-if (move_uploaded_file($temporario, $pasta . $nome)) {
+    $nome = basename($arquivo["name"]);
+    $temporario = $arquivo["tmp_name"];
 
-    echo "<h2>Imagem enviada com sucesso!</h2>";
+    $extensao = pathinfo($nome, PATHINFO_EXTENSION);
 
-    echo "<img src='{$pasta}{$nome}' width='300'>";
+    $extensoesPermitidas = array("jpg", "jpeg", "png", "gif");
 
-    echo "<br><br>";
+    if (in_array(strtolower($extensao), $extensoesPermitidas)) {
 
-    echo "<a href='index.php'>Voltar para a galeria</a>";
+        if (move_uploaded_file($temporario, $pasta . $nome)) {
+
+            echo "<h2>Imagem enviada com sucesso!</h2>";
+
+            echo "<img src='{$pasta}{$nome}' width='300'>";
+
+            echo "<br><br>";
+
+            echo "<a href='index.php'>Voltar para a galeria</a>";
+
+        } else {
+
+            echo "<h2>Erro ao enviar a imagem.</h2>";
+        }
+
+    } else {
+
+        echo "<h2>Formato de imagem não permitido.</h2>";
+        echo "<p>Use JPG, JPEG, PNG ou GIF.</p>";
+    }
 
 } else {
 
-    echo "<h2>Erro ao enviar a imagem.</h2>";
+    echo "<h2>Nenhuma imagem foi selecionada.</h2>";
 
-    echo "<a href='upload.php'>Tentar novamente</a>";
 }
 
 ?>
